@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BT18 - Player</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#080d18;
+  color:#fff;
+  font-family:Arial,sans-serif;
+}
+header{
+  background:#101a2d;
+  padding:18px;
+  border-bottom:1px solid #183b68;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{font-size:25px;font-weight:bold;color:#29a9ff}
+.logo span{color:white}
+main{max-width:850px;margin:auto;padding:18px}
+.welcome{margin:22px 0}
+.welcome h2{margin-bottom:5px}
+.muted{color:#91a4bd;font-size:14px}
+.points{
+  background:linear-gradient(135deg,#0756a5,#10264a);
+  border:1px solid #278cff;
+  border-radius:15px;
+  padding:22px;
+  margin:20px 0;
+}
+.points small{color:#c7e4ff}
+.balance{font-size:34px;font-weight:bold;margin:10px 0}
+.section-title{margin-top:30px}
+.games{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+.game{
+  background:#111d30;
+  border:1px solid #203a5c;
+  border-radius:13px;
+  padding:18px;
+}
+.game-icon{font-size:35px}
+.game h3{margin:12px 0 6px}
+button{
+  background:#1688ed;
+  color:white;
+  border:0;
+  padding:11px 17px;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:disabled{background:#35465b;color:#aab6c5}
+.profile{
+  background:#111d30;
+  padding:18px;
+  border-radius:12px;
+  margin-top:25px;
+}
+footer{
+  text-align:center;
+  padding:25px;
+  color:#8193aa;
+  font-size:13px;
+}
+@media(max-width:450px){
+  .games{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BT<span>18</span></div>
+  <div>PLAYER</div>
+</header>
+
+<main>
+  <div class="welcome">
+    <h2>Welcome to BT18!</h2>
+    <div class="muted">Your Free Demo Gaming Platform</div>
+  </div>
+
+  <div class="points">
+    <small>YOUR DEMO POINTS</small>
+    <div class="balance" id="balance">1,000</div>
+    <small>Free demo points only</small>
+  </div>
+
+  <h2 class="section-title">🎮 Available Games</h2>
+
+  <div class="games">
+    <div class="game">
+      <div class="game-icon">🎯</div>
+      <h3>Game 01</h3>
+      <div class="muted">Demo game coming soon</div>
+      <br>
+      <button disabled>Coming Soon</button>
+    </div>
+
+    <div class="game">
+      <div class="game-icon">🎲</div>
+      <h3>Game 02</h3>
+      <div class="muted">Demo game coming soon</div>
+      <br>
+      <button disabled>Coming Soon</button>
+    </div>
+
+    <div class="game">
+      <div class="game-icon">🧩</div>
+      <h3>Game 03</h3>
+      <div class="muted">Demo game coming soon</div>
+      <br>
+      <button disabled>Coming Soon</button>
+    </div>
+
+    <div class="game">
+      <div class="game-icon">🚀</div>
+      <h3>Game 04</h3>
+      <div class="muted">Demo game coming soon</div>
+      <br>
+      <button disabled>Coming Soon</button>
+    </div>
+  </div>
+
+  <div class="profile">
+    <h3>👤 Player Profile</h3>
+    <p class="muted">Player ID: Guest</p>
+    <p class="muted">Account: Demo Mode</p>
+  </div>
+</main>
+
+<footer>
+  BT18 Demo Gaming Platform<br>
+  Free Demo Points Only · No Real Money
+</footer>
+
+</body>
+</html>
