@@ -35,6 +35,24 @@
 @keyframes clashPulse{from{transform:scale(.85);filter:brightness(.8)}to{transform:scale(1.2);filter:brightness(1.5)}}
 @keyframes victoryFlash{50%{filter:brightness(1.7);box-shadow:0 0 35px #ffe17a;transform:scale(1.035)}}
 @media(max-width:430px){.arena{padding:18px 7px 38px;min-height:225px}.fighter{min-height:170px}.fighter .art{font-size:57px}.versus-wrap{gap:3px}.versus{font-size:16px}.clash{font-size:18px}.chip-stack i{width:22px;height:22px}}
+
+/* Dragon vs Tiger exclusive cinematic 16:9 arena */
+#battleArena{width:100%;aspect-ratio:16/9;min-height:0;height:auto;max-height:440px;grid-template-columns:minmax(0,1fr) 12% minmax(0,1fr);align-items:center;gap:1.5%;padding:5% 3% 10%;border:2px solid #c99a52;border-radius:18px;isolation:isolate;background:linear-gradient(180deg,#06172bd9,#07101feF),radial-gradient(ellipse at 50% 55%,#28527a,#091326 70%);box-shadow:inset 0 0 55px #000c,0 12px 34px #0009;position:relative;overflow:hidden}
+#battleArena:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#b9432b22,transparent 43%,#e0a33a22),repeating-linear-gradient(0deg,transparent 0 34px,#ffffff08 35px 36px),repeating-linear-gradient(90deg,transparent 0 34px,#ffffff08 35px 36px);mask-image:linear-gradient(#000,transparent 90%)}
+#battleArena:after{content:"";position:absolute;z-index:-1;left:50%;top:8%;bottom:8%;width:1px;background:linear-gradient(transparent,#f4d18b99,transparent);box-shadow:0 0 22px #f6bc56}
+#battleArena .fighter{min-width:0;min-height:0;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:3% 2%;border-radius:13px;backdrop-filter:blur(3px)}
+#battleArena .fighter .art{font-size:clamp(48px,9vw,100px);line-height:1.05;margin:4px 0 8px}
+#battleArena .fighter-sub{font-size:clamp(7px,1.2vw,11px)}
+#battleArena .fighter strong{font-size:clamp(14px,2.7vw,27px)}
+#battleArena .chip-stack{margin-top:3%}
+#battleArena .fighter small{font-size:clamp(7px,1vw,10px)}
+#battleArena .versus-wrap{width:100%}
+#battleArena .versus{font-size:clamp(16px,3vw,32px);font-style:italic}
+#battleArena .clash{font-size:clamp(18px,3vw,34px)}
+#battleArena .arena-foot{bottom:3%;font-size:clamp(7px,1.2vw,11px)}
+#dragonSide{box-shadow:inset 0 0 34px #ff562d22,0 0 22px #f05b3422}
+#tigerSide{box-shadow:inset 0 0 34px #ffc04a22,0 0 22px #f5a93b22}
+@media(max-width:560px){#battleArena{aspect-ratio:16/9;min-height:205px;padding:5% 2% 11%;gap:1%}#battleArena .fighter{padding:2% 1%}#battleArena .fighter .art{font-size:clamp(43px,13vw,65px)}#battleArena .chip-stack i{width:19px;height:19px;font-size:7px}#battleArena .fighter-sub{letter-spacing:.5px}#battleArena .arena-foot{letter-spacing:.6px}}
 </style></head><body>
 <header class="top"><div class="logo">BT<b>18</b></div><div class="row"><span id="who" class="pill">DEMO PLAYER</span><button id="logout" class="hide" style="padding:9px 12px">Logout</button></div></header>
 <main class="wrap">
