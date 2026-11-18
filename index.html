@@ -289,4 +289,65 @@ $("result").classList.remove("hide");$("result").classList.add(data.win?"result-
 function playTick(){if(!sound)return;try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type="sine";o.frequency.setValueAtTime(760,c.currentTime);o.frequency.exponentialRampToValueAtTime(420,c.currentTime+.09);g.gain.setValueAtTime(.055,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.11);o.start();o.stop(c.currentTime+.12);o.onended=()=>c.close()}catch(e){}}
 async function loadHistory(){const {data,error}=await db.from("demo_rounds").select("game_slug,result,created_at").order("created_at",{ascending:false}).limit(8);if(error){$("history").textContent=error.message;return}if(!data.length){$("history").textContent="No rounds yet.";return}const table=document.createElement("table");table.className="history";table.innerHTML="<tr><th>Game</th><th>Round</th><th>Time</th></tr>";data.forEach(r=>{let d={};try{d=JSON.parse(r.result)}catch(e){}const tr=document.createElement("tr");[r.game_slug==="head-and-tail"?"Head & Tail":r.game_slug==="dragon-vs-tiger"?"Dragon vs Tiger":"Big Small",r.game_slug==="big-small"?((d.win?"WIN":"LOSS")+" · "+(d.choice||"")+" · #"+d.outcome+" · "+(Number(d.outcome)>=5?"Big":"Small")+" · "+(Number(d.outcome)%2===0?"Red":"Green")+" · Stake "+(d.stake||0)+" · Payout "+(d.payout||0)):((d.win?"Win":"Loss")+" · "+(d.outcome||"")),new Date(r.created_at).toLocaleString()].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.appendChild(td)});table.appendChild(tr)});$("history").replaceChildren(table)}
 db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_IN")boot()});boot();
-</script></body></html>
+</script>
+<style>
+#bt18-practice-arcade{margin:20px 0;padding:20px;border:1px solid #42658a;border-radius:18px;background:linear-gradient(145deg,#172b46,#091728);color:#f4f8ff}
+#bt18-practice-arcade .pa-head{text-align:center}#bt18-practice-arcade .pa-head h2{margin:4px;color:#ffd978}
+#bt18-practice-arcade .pa-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+#bt18-practice-arcade .pa-tabs button{background:#193b5e;border:1px solid #456b91}
+#bt18-practice-arcade .pa-tabs button[aria-pressed=true]{background:#087bc4;outline:2px solid #53d9ff}
+#bt18-practice-arcade .pa-stage{padding:18px;border-radius:14px;background:#071626;border:1px solid #2b4c6c;text-align:center}
+#bt18-practice-arcade .pa-reels{display:flex;justify-content:center;gap:10px;margin:18px 0}
+#bt18-practice-arcade .pa-reels span{display:grid;place-items:center;width:76px;height:76px;border-radius:12px;background:#fff;color:#18263a;font-size:38px}
+#bt18-practice-arcade .pa-action{margin:6px;background:linear-gradient(135deg,#168cff,#0756b7)}
+#bt18-practice-arcade .pa-score{color:#6de7bd;font-weight:900}
+#bt18-practice-arcade .pa-msg{min-height:25px;color:#ffd978;margin-top:12px}
+#bt18-practice-arcade .pa-wheel{width:170px;height:170px;margin:12px auto;border-radius:50%;display:grid;place-items:center;border:8px solid #e7c16b;background:conic-gradient(#c94e54 0 45deg,#f1c75b 45deg 90deg,#258e76 90deg 135deg,#4677c5 135deg 180deg,#c94e54 180deg 225deg,#f1c75b 225deg 270deg,#258e76 270deg 315deg,#4677c5 315deg);font-size:28px;box-shadow:0 0 24px #0008}
+#bt18-practice-arcade .pa-dice{font-size:68px;margin:12px}
+#bt18-practice-arcade .pa-note{font-size:12px;color:#a9bfd7;line-height:1.5}
+@media(max-width:430px){#bt18-practice-arcade{padding:14px}#bt18-practice-arcade .pa-reels span{width:62px;height:62px;font-size:32px}}
+</style>
+<section id="bt18-practice-arcade" class="panel" aria-label="Free practice arcade">
+ <div class="pa-head"><div style="font-size:34px">🎮</div><h2>Practice Arcade</h2><p class="muted">Free-play mini games · no bets · no coin deductions or payouts</p><p>Practice score: <span class="pa-score" id="pa-score">0</span></p></div>
+ <div class="pa-tabs" role="group" aria-label="Choose practice game">
+  <button type="button" data-pa="slots" aria-pressed="true">🎰 Slots</button>
+  <button type="button" data-pa="wheel" aria-pressed="false">🎡 Lucky Wheel</button>
+  <button type="button" data-pa="dice" aria-pressed="false">🎲 Dice</button>
+ </div>
+ <div class="pa-stage">
+  <div id="pa-slots">
+   <h3>Lucky Slots</h3><div class="pa-reels"><span id="pa-r1">🍒</span><span id="pa-r2">⭐</span><span id="pa-r3">💎</span></div>
+   <button type="button" class="pa-action" id="pa-spin">FREE SPIN</button>
+  </div>
+  <div id="pa-wheel" hidden>
+   <h3>Lucky Wheel</h3><div class="pa-wheel" id="pa-wheel-face">🎡</div>
+   <button type="button" class="pa-action" id="pa-wheel-spin">FREE SPIN</button>
+  </div>
+  <div id="pa-dice" hidden>
+   <h3>Dice Challenge</h3><div class="pa-dice" id="pa-dice-face">🎲</div>
+   <button type="button" class="pa-action" id="pa-roll">ROLL DICE</button>
+  </div>
+  <p class="pa-msg" id="pa-msg" aria-live="polite">Choose a free practice game.</p>
+ </div>
+ <p class="pa-note">This arcade uses a separate practice score only. It does not read, spend, award, or change Admin-issued player coins or account balances.</p>
+</section>
+<script>
+(function(){
+ const root=document.getElementById('bt18-practice-arcade');if(!root||root.dataset.ready)return;root.dataset.ready='1';
+ let score=0,busy=false;const $=id=>document.getElementById(id);
+ const symbols=['🍒','⭐','💎','🍋','🔔','7️⃣'];
+ const say=t=>{$('pa-msg').textContent=t};const add=n=>{score+=n;$('pa-score').textContent=score};
+ root.querySelectorAll('[data-pa]').forEach(btn=>btn.addEventListener('click',()=>{
+  if(busy)return;root.querySelectorAll('[data-pa]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+  ['slots','wheel','dice'].forEach(k=>$( 'pa-'+k).hidden=k!==btn.dataset.pa);say('Free practice round. No coins are used.');
+ }));
+ $('pa-spin').addEventListener('click',()=>{
+  if(busy)return;busy=true;$('pa-spin').disabled=true;let count=0;
+  const timer=setInterval(()=>{['pa-r1','pa-r2','pa-r3'].forEach(id=>$(id).textContent=symbols[Math.floor(Math.random()*symbols.length)]);if(++count===12){clearInterval(timer);const a=['pa-r1','pa-r2','pa-r3'].map(id=>$(id).textContent);if(a.every(x=>x===a[0])){add(10);say('Three matching symbols! +10 practice score.')}else if(a[0]===a[1]||a[1]===a[2]||a[0]===a[2]){add(3);say('A pair! +3 practice score.')}else say('Good try! Free spin again.');busy=false;$('pa-spin').disabled=false;}},100);
+ });
+ $('pa-wheel-spin').addEventListener('click',()=>{if(busy)return;busy=true;$('pa-wheel-spin').disabled=true;const face=$('pa-wheel-face');face.style.transition='transform 1.6s cubic-bezier(.15,.7,.2,1)';face.style.transform='rotate('+((Math.floor(Math.random()*8)+8)*360+Math.floor(Math.random()*360))+'deg)';setTimeout(()=>{const n=1+Math.floor(Math.random()*8);add(n);face.textContent=['⭐','🍀','💎','🎉','🌟','🎯','🪙','🏆'][n-1];say('Wheel result: '+n+' practice points.');face.style.transform='';$('pa-wheel-spin').disabled=false;busy=false;},1700);});
+ $('pa-roll').addEventListener('click',()=>{if(busy)return;busy=true;$('pa-roll').disabled=true;const n=1+Math.floor(Math.random()*6);$('pa-dice-face').textContent=['⚀','⚁','⚂','⚃','⚄','⚅'][n-1];add(n);say('You rolled '+n+'. +'+n+' practice score.');$('pa-roll').disabled=false;busy=false;});
+})();
+</script>
+
+</body></html>
