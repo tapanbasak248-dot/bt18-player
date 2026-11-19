@@ -350,4 +350,54 @@ db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_IN")boot()});boot();
 })();
 </script>
 
+
+<style>
+#bt18-five-arcade{margin:22px 0;padding:20px;border:1px solid #42658a;border-radius:18px;background:linear-gradient(145deg,#172b46,#091728);color:#f4f8ff}
+#bt18-five-arcade h2{text-align:center;color:#8feaff;margin:4px 0}
+#bt18-five-arcade .five-sub{text-align:center;color:#a9bfd7;font-size:13px}
+#bt18-five-arcade .five-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin-top:16px}
+#bt18-five-arcade .five-card{padding:15px;border:1px solid #315575;border-radius:14px;background:linear-gradient(145deg,#10253b,#091727);text-align:center}
+#bt18-five-arcade .five-card h3{margin:5px 0 8px}
+#bt18-five-arcade .five-display{min-height:70px;display:grid;place-items:center;font-size:34px;font-weight:900;color:#ffd978}
+#bt18-five-arcade .five-card button{margin:5px}
+#bt18-five-arcade .five-msg{min-height:35px;color:#9fe8cf;font-size:13px}
+#bt18-five-arcade .five-score{color:#8feaff;font-weight:900}
+#bt18-five-arcade input{max-width:100px;padding:10px;border-radius:9px;border:1px solid #345574;background:#071424;color:white}
+</style>
+<section id="bt18-five-arcade" class="panel" aria-label="Five free arcade games">
+ <h2>🎮 BT18 Arcade Zone</h2>
+ <p class="five-sub">Five free-play mini games · Scores only · No coin stakes or deductions</p>
+ <div class="five-grid">
+  <article class="five-card"><h3>🎨 Color Reflex</h3><p class="muted">Tap the colour shown below.</p><div class="five-display" id="f-color">🔵</div><button type="button" id="f-color-new">New Colour</button><div class="actions" style="justify-content:center"><button type="button" data-color="🔴">Red</button><button type="button" data-color="🔵">Blue</button><button type="button" data-color="🟢">Green</button></div><p class="five-msg" id="f-color-msg" aria-live="polite">Choose the matching colour.</p><div class="five-score">Score: <span id="f-color-score">0</span></div></article>
+  <article class="five-card"><h3>🧠 Memory Flip</h3><p class="muted">Find matching pairs.</p><div class="five-display" id="f-memory">✦ ✦ ✦ ✦</div><button type="button" id="f-memory-start">Start / Reset</button><div class="five-msg" id="f-memory-msg" aria-live="polite">Press Start to begin.</div><div class="five-score">Pairs: <span id="f-memory-score">0</span>/4</div></article>
+  <article class="five-card"><h3>🎲 Double Dice</h3><p class="muted">Roll two dice and beat your best total.</p><div class="five-display" id="f-dice">⚀ + ⚀</div><button type="button" id="f-dice-roll">Roll Dice</button><p class="five-msg" id="f-dice-msg" aria-live="polite">Ready to roll.</p><div class="five-score">Best total: <span id="f-dice-best">0</span></div></article>
+  <article class="five-card"><h3>🔢 Number Sprint</h3><p class="muted">Guess the hidden number from 1–20.</p><div class="five-display" id="f-number">?</div><input id="f-number-input" type="number" min="1" max="20" inputmode="numeric" aria-label="Guess number"><button type="button" id="f-number-check">Check</button><button type="button" id="f-number-reset">New Number</button><p class="five-msg" id="f-number-msg" aria-live="polite">Enter a number to start.</p></article>
+  <article class="five-card"><h3>⚡ Tap Burst</h3><p class="muted">Tap as often as possible in 10 seconds.</p><div class="five-display" id="f-tap-time">10s</div><button type="button" id="f-tap-start">Start Round</button><button type="button" id="f-tap-hit" disabled> TAP! </button><p class="five-msg" id="f-tap-msg" aria-live="polite">Taps: <span id="f-tap-count">0</span></p><div class="five-score">Best: <span id="f-tap-best">0</span></div></article>
+ </div>
+</section>
+<script>
+(function(){
+ const root=document.getElementById('bt18-five-arcade');if(!root||root.dataset.ready)return;root.dataset.ready='1';
+ const $=id=>document.getElementById(id),rand=n=>Math.floor(Math.random()*n);
+ let color='🔵',colorScore=0;
+ const colors=['🔴','🔵','🟢'];
+ function nextColor(){color=colors[rand(3)];$('f-color').textContent=color;$('f-color-msg').textContent='Tap the matching colour.'}
+ $('f-color-new').addEventListener('click',nextColor);
+ root.querySelectorAll('[data-color]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.color===color){colorScore++;$('f-color-score').textContent=colorScore;$('f-color-msg').textContent='Correct! +1 score.';nextColor()}else $('f-color-msg').textContent='Try again.'}));
+ let deck=[],opened=[],matched=[],lock=false;
+ function memoryReset(){deck=['🌙','🚀','🌈','⚡','🌙','🚀','🌈','⚡'].sort(()=>Math.random()-.5);opened=[];matched=[];lock=false;renderMemory();$('f-memory-score').textContent='0';$('f-memory-msg').textContent='Find all four pairs.'}
+ function renderMemory(){$('f-memory').innerHTML='';deck.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.textContent=matched.includes(i)||opened.includes(i)?v:'✦';b.disabled=matched.includes(i)||opened.includes(i)||lock;b.addEventListener('click',()=>{if(lock||opened.includes(i)||matched.includes(i))return;opened.push(i);renderMemory();if(opened.length===2){const [a,c]=opened;if(deck[a]===deck[c]){matched.push(a,c);opened=[];$('f-memory-score').textContent=String(matched.length/2);if(matched.length===8)$('f-memory-msg').textContent='You matched every pair!'}else{lock=true;setTimeout(()=>{opened=[];lock=false;renderMemory()},650)}}});$('f-memory').appendChild(b)})}
+ $('f-memory-start').addEventListener('click',memoryReset);
+ let diceBest=0;const die=['⚀','⚁','⚂','⚃','⚄','⚅'];
+ $('f-dice-roll').addEventListener('click',()=>{const a=rand(6)+1,b=rand(6)+1,total=a+b;$('f-dice').textContent=die[a-1]+' + '+die[b-1]+' = '+total;diceBest=Math.max(diceBest,total);$('f-dice-best').textContent=diceBest;$('f-dice-msg').textContent=total>=10?'Great roll!':total<=4?'Low roll — try again.':'Nice roll!'});
+ let target=rand(20)+1,tries=0,done=false;
+ function numberReset(){target=rand(20)+1;tries=0;done=false;$('f-number').textContent='?';$('f-number-input').value='';$('f-number-msg').textContent='Guess a number from 1 to 20.'}
+ $('f-number-reset').addEventListener('click',numberReset);
+ $('f-number-check').addEventListener('click',()=>{if(done)return;const n=Number($('f-number-input').value);if(!Number.isInteger(n)||n<1||n>20){$('f-number-msg').textContent='Enter a whole number from 1 to 20.';return}tries++;if(n===target){done=true;$('f-number').textContent=String(target);$('f-number-msg').textContent='Correct in '+tries+' tries!'}else $('f-number-msg').textContent=n<target?'Try higher.':'Try lower.'});
+ let tapCount=0,tapBest=0,tapTimer=null,tapEnd=0;
+ $('f-tap-start').addEventListener('click',()=>{clearInterval(tapTimer);tapCount=0;tapEnd=10;$('f-tap-count').textContent='0';$('f-tap-time').textContent='10s';$('f-tap-hit').disabled=false;$('f-tap-start').disabled=true;tapTimer=setInterval(()=>{tapEnd--;$('f-tap-time').textContent=tapEnd+'s';if(tapEnd<=0){clearInterval(tapTimer);$('f-tap-hit').disabled=true;$('f-tap-start').disabled=false;tapBest=Math.max(tapBest,tapCount);$('f-tap-best').textContent=tapBest;$('f-tap-msg').textContent='Round complete: '+tapCount+' taps.'}},1000)});
+ $('f-tap-hit').addEventListener('click',()=>{tapCount++;$('f-tap-count').textContent=tapCount});
+})();
+</script>
+
 </body></html>
