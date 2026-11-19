@@ -205,7 +205,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 #gamePanel .timerbar{transition:background .2s,border-color .2s}
 #gamePanel.final-countdown .timerbar{background:linear-gradient(100deg,#48231f,#332018);border-color:#ff9d4a}
 @media(prefers-reduced-motion:reduce){#gamePanel.intro-play,#gamePanel.reveal-shake,#gamePanel.final-countdown *{animation:none!important}}
-</style></head><body>
+</style><style>#gamePanel,#app > section.panel:has(#history){display:none!important}.coin-policy{margin:12px 0;padding:12px 14px;border:1px solid #2d648b;border-radius:12px;background:#0b2036;color:#b9d9f4;font-size:13px;line-height:1.5}</style></head><body>
 <header class="top"><div class="logo">BT<b>18</b></div><div class="row"><span id="who" class="pill">PLAYER</span><button id="logout" class="hide" style="padding:9px 12px">Logout</button></div></header>
 <main class="wrap">
 <section id="loginPanel" class="panel" style="max-width:440px;margin:42px auto">
@@ -216,11 +216,11 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 <p class="notice">For entertainment only. No deposits, withdrawals or cash prizes.</p></section>
 <div id="app" class="hide">
 <section class="hero"><div class="pill" style="display:inline-block">✦ GAME ARENA</div><h1>Play smart. Have fun.</h1><p class="muted">Your personal gaming dashboard.</p></section>
-<section class="panel"><div class="row"><div><div class="muted">YOUR BALANCE</div><div class="balance" id="balance">— <small>PTS</small></div><div class="muted" id="playerName">Player</div></div><div style="font-size:42px">🪙</div></div></section>
+<section class="panel"><div class="row"><div><div class="muted">YOUR VIRTUAL COINS</div><div class="balance" id="balance">— <small>COINS</small></div><div class="muted" id="playerName">Player</div></div><div style="font-size:42px">🪙</div></div><div class="coin-policy">Virtual coins are managed by the BT18 administrator. They are not cash, cannot be wagered, and are not redeemable.</div></section>
 <section class="panel"><h2>Account security</h2><p class="muted">Change your own username or password. Passwords are private and cannot be viewed by anyone.</p><label>New username</label><input id="newOwnUsername" class="field" autocomplete="off" placeholder="New username"><label>New password (minimum 8 characters)</label><input id="newOwnPassword" class="field" type="password" autocomplete="new-password" placeholder="New password"><button id="saveOwnAccount">Update account</button><p id="accountMsg" class="msg"></p></section>
 <h2>Choose your game</h2><div class="grid">
-<article class="game"><div class="emoji">🪙</div><h3>Head & Tail</h3><p class="muted">Pick a side of the coin.</p><button onclick="openGame('head-and-tail')">Play now</button></article>
-<article class="game"><div class="emoji">🐉</div><h3>Dragon vs Tiger</h3><p class="muted">Choose Dragon or Tiger.</p><button onclick="openGame('dragon-vs-tiger')">Play now</button></article><article class="game"><div class="emoji">🔴🟢</div><h3>Big Small</h3><p class="muted">Number 0–9 · Big/Small · Red/Green</p><button onclick="openGame('big-small')">Play now</button></article>
+
+
 
 <section id="worldCricket" class="panel world-cricket">
   <div class="cricket-head"><div><div class="pill" style="display:inline-block">🌍 WORLD CRICKET</div><h2>Global Cricket Centre</h2><p class="muted">International · T20 Leagues · ODI · Test · Domestic · Women's</p></div><div class="live-mark"><i></i> GLOBAL FEED</div></div>
@@ -264,7 +264,7 @@ async function login(){const entered=$("email").value.trim(),email=entered.inclu
 async function boot(){const {data:{user}}=await db.auth.getUser();if(!user){$("app").classList.add("hide");$("loginPanel").classList.remove("hide");$("logout").classList.add("hide");return}
 const {data,error}=await db.from("profiles").select("username,points,win_chance,role").eq("id",user.id).single();
 if(error||!data||data.role!=="player"){await db.auth.signOut();$("loginMsg").textContent="Player account not found or not permitted.";return}
-profile=data;$("loginPanel").classList.add("hide");$("app").classList.remove("hide");$("logout").classList.remove("hide");$("who").textContent="PLAYER";$("playerName").textContent=data.username;$("balance").innerHTML=Number(data.points).toLocaleString()+" <small>PTS</small>";$("newOwnUsername").value=data.username;await touchPresence(true);clearInterval(presenceTimer);presenceTimer=setInterval(()=>touchPresence(false),30000);await loadHistory();loadWorldCricket()}
+profile=data;$("loginPanel").classList.add("hide");$("app").classList.remove("hide");$("logout").classList.remove("hide");$("who").textContent="PLAYER";$("playerName").textContent=data.username;$("balance").innerHTML=Number(data.points).toLocaleString()+" <small>COINS</small>";$("newOwnUsername").value=data.username;await touchPresence(true);clearInterval(presenceTimer);presenceTimer=setInterval(()=>touchPresence(false),30000);await loadHistory();loadWorldCricket()}
 async function touchPresence(loginEvent,logoutEvent=false){await db.rpc("touch_account_presence",{p_login:loginEvent,p_user_agent:navigator.userAgent,p_logout:logoutEvent})}
 async function updateOwnAccount(){const username=$("newOwnUsername").value.trim().toLowerCase(),password=$("newOwnPassword").value;if(!/^[a-z0-9_]{3,24}$/.test(username)){$("accountMsg").textContent="Username must be 3–24 characters (letters, numbers, underscore).";return}if(password&&password.length<8){$("accountMsg").textContent="Password must be at least 8 characters.";return}const b=$("saveOwnAccount");b.disabled=true;try{if(username!==profile.username){const {data,error}=await db.functions.invoke("account-update-username",{body:{username}});if(error||data?.error)throw new Error(data?.error||error.message);profile.username=username;$("playerName").textContent=username}if(password){const {error}=await db.auth.updateUser({password});if(error)throw error;$("newOwnPassword").value=""}$("accountMsg").textContent="Account updated successfully."}catch(e){$("accountMsg").textContent=e.message}finally{b.disabled=false}}
 async function logout(){clearInterval(presenceTimer);presenceTimer=null;await touchPresence(false,true);await db.auth.signOut();profile=null;boot()}
