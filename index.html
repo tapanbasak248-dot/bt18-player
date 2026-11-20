@@ -556,7 +556,7 @@ db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_IN")boot()});boot();
     const bet=currentBet(state);
     const settled=bet && bet.result ? bet.result : null;
     const outcome=formatOutcome(currentGame,raw);
-    renderLiveGame(currentGame,outcome);
+    runRuleAnimation(currentGame,outcome);
     $("hostPhase").textContent="SERVER RESULT";
     $("hostLine").textContent="Betting is closed. The server has published this round's result.";
     $("hostBoardText").textContent=outcome;
