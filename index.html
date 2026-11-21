@@ -361,7 +361,7 @@ function startBetTimer(){clearInterval(betTimer);let lastBeat=-1;const syncRound
   return '<div class="tp-seat '+(s.idx===0?'tp-you':'')+'"><b>'+s.name+'</b><div class="tp-cards">'+cards+'</div>'+rank+'</div>';
  }).join("")+'</div><div class="tp-pot">🪙 VIRTUAL COIN TABLE</div></div>';
 }
-function renderLiveGame(slug,outcome){
+function renderLiveGame(slug,outcome,hands=null){
  const v=$("liveGameVisual"),status=$("liveGameStatus");if(!v||!status)return;
  v.className="live-game-visual"+(outcome?"":" running");
  const card=(txt,cls="")=>'<span class="real-card '+cls+'">'+txt+'</span>';
@@ -369,7 +369,7 @@ function renderLiveGame(slug,outcome){
  let html="",label="";
  if(slug==="head-and-tail"){html='<div class="coin-realistic"><span>'+(outcome==="Tail"?"TAIL":"HEAD")+'</span></div>';label=outcome?"COIN RESULT":"COIN TOSS IN PROGRESS"}
  else if(slug==="dragon-vs-tiger"){html='<div class="real-duel">'+card("DRAGON","red")+'<b>VS</b>'+card("TIGER","gold")+'</div>';label=outcome?"WINNER: "+String(outcome).toUpperCase():"DRAGON VS TIGER"}
- else if(slug==="teen-patti"){html=teenPattiTable(null,false);label="YOU + 4 BOTS · THREE CARDS EACH"}
+ else if(slug==="teen-patti"){html=teenPattiTable(hands,!!hands);label=hands?"ALL FIVE HANDS REVEALED":"YOU + 4 BOTS · THREE CARDS EACH"}
  else if(slug==="lucky-dice"){html=die(outcome||5);label=outcome?"DICE RESULT":"DICE ROLLING"}
  else if(slug==="roulette"){html='<div class="roulette-real"><div class="roulette-rim"><div class="roulette-numbers"></div><div class="roulette-hub"></div></div><span class="roulette-ball"></span></div><b class="real-number">'+(outcome||"SPINNING")+'</b>';label=outcome?"BALL STOPPED · RESULT "+outcome:"ROULETTE SPINNING"}
  else{html='<div class="number-draw-real"><span>'+(outcome||"—")+'</span></div><span class="real-number">BIG · SMALL</span>';label=outcome?"NUMBER DRAWN":"DRAWING NUMBER"}
@@ -387,7 +387,7 @@ function runRuleAnimation(slug,outcome){
  else if(slug==="roulette"){html='<div class="roulette-real spin-motion"><div class="roulette-rim"><div class="roulette-numbers"></div><div class="roulette-hub"></div></div><span class="roulette-ball"></span></div>';status="ROULETTE WHEEL SPINNING"}
  else{html='<div class="number-draw-real roll-motion"><span>?</span></div>';status="DRAWING NUMBER"}
  v.className="live-game-visual running";v.innerHTML=html;$("liveGameStatus").textContent=status;
- setTimeout(()=>{if(currentGame!==slug||$("gamePanel").classList.contains("hide"))return;renderLiveGame(slug,String(outcome));$("liveGameStatus").textContent=slug==="head-and-tail"?(outcome==="Head"?"HEAD · RESULT":"TAIL · RESULT"):slug==="roulette"?"BALL STOPPED · RESULT "+outcome:slug==="teen-patti"?"CARDS REVEALED · SERVER HAND":slug==="dragon-vs-tiger"?"BOTH CARDS REVEALED · "+outcome:slug==="lucky-dice"?"DICE STOPPED · RESULT "+outcome:"NUMBER DRAWN · RESULT "+outcome},3000)
+ setTimeout(()=>{if(currentGame!==slug||$("gamePanel").classList.contains("hide"))return;renderLiveGame(slug,String(outcome),slug==="teen-patti"?(outcome&&typeof outcome==="object"?outcome.hands:null):null);$("liveGameStatus").textContent=slug==="head-and-tail"?(outcome==="Head"?"HEAD · RESULT":"TAIL · RESULT"):slug==="roulette"?"BALL STOPPED · RESULT "+outcome:slug==="teen-patti"?"CARDS REVEALED · SERVER HAND":slug==="dragon-vs-tiger"?"BOTH CARDS REVEALED · "+outcome:slug==="lucky-dice"?"DICE STOPPED · RESULT "+outcome:"NUMBER DRAWN · RESULT "+outcome},3000)
 }
 function animateGameAction(slug){runRuleAnimation(slug,"")}
 function playDealerAction(slug=currentGame){animateGameAction(slug)}
