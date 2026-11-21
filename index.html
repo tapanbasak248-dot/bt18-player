@@ -383,7 +383,7 @@ function runRuleAnimation(slug,outcome){
  if(slug==="head-and-tail"){html='<div class="coin-realistic toss-motion"><span>BT18</span></div>';status="COIN TOSS · IN MOTION"}
  else if(slug==="teen-patti"){html=teenPattiTable(null,false);status="DEALING 3 CARDS TO YOU + 4 BOTS"}
  else if(slug==="dragon-vs-tiger"){html='<div class="real-duel dealing">'+back+'<b>VS</b>'+back+'</div>';status="DEALING BOTH CARDS"}
- else if(slug==="lucky-dice"){html=die;status="DICE ROLLING"}
+ else if(slug==="lucky-dice"){html=die.replace("realistic-die","realistic-die action-die");status="DICE ROLLING · DIE IN MOTION"}
  else if(slug==="roulette"){html='<div class="roulette-real spin-motion"><div class="roulette-rim"><div class="roulette-numbers"></div><div class="roulette-hub"></div></div><span class="roulette-ball"></span></div>';status="ROULETTE WHEEL SPINNING"}
  else{html='<div class="number-draw-real roll-motion"><span>?</span></div>';status="DRAWING NUMBER"}
  v.className="live-game-visual running";v.innerHTML=html;$("liveGameStatus").textContent=status;
